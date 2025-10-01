@@ -258,11 +258,11 @@
     let openDrawer = null; // 'filters' | 'legend' | null
 
     function setTopbarUI(){
-  btnFilters.textContent = (openDrawer === 'filters') ? '✕' : 'Filters';
-  btnLegend.textContent  = (openDrawer === 'legend')  ? '✕' : 'Guide';
-  btnFilters.setAttribute('aria-expanded', openDrawer === 'filters');
-  btnLegend.setAttribute('aria-expanded',  openDrawer === 'legend');
-}
+      btnFilters.textContent = (openDrawer === 'filters') ? '✕' : 'Filters';
+      btnLegend.textContent  = (openDrawer === 'legend')  ? '✕' : 'Guide';
+      btnFilters.setAttribute('aria-expanded', openDrawer === 'filters');
+      btnLegend.setAttribute('aria-expanded',  openDrawer === 'legend');
+    }
 
     function openDrawerFn(which){
       if (!isMobile()) return;
@@ -344,12 +344,18 @@
       const ed     = formatDate(it.end_date);
       const link   = safeText(it.link);
 
+      // ✅ Special-case the Pardot URL -> turn into mailto with "send email"
+      const PARDOT = 'https://go.pardot.com/l/1075812/2025-08-07/kcd92j';
+      const isPardot = !!link && link.trim().toLowerCase() === PARDOT.toLowerCase();
+      const href  = isPardot ? 'mailto:sgm@abts.com' : link;
+      const label = isPardot ? 'send email' : 'Visit website';
+
       return `
         <div class="popup-content">
           <b>${shortN}</b>${full ? ' – ' + full : ''}<br><br>
           ${loc}<br><br>
           ${(sd && ed) ? ('from ' + sd + ' to ' + ed + '.<br><br>') : ''}
-          ${link ? ('<a href="' + link + '" target="_blank" rel="noopener">Visit website</a>') : ''}
+          ${href ? ('<a href="' + href + '" target="_blank" rel="noopener">' + label + '</a>') : ''}
         </div>
       `;
     }
