@@ -137,7 +137,7 @@
 
     // Old Pardot (fallback guard) and new Medical Hub constants
     const PARDOT = 'https://go.pardot.com/l/1075812/2025-08-07/kcd92j';
-    const MEDHUB = 'https://medicalhub.abtscs.com/Groups.aspx';
+    const MEDHUB = 'https://medicalhub.abtscs.com/Groups.aspx?utm_source=MedicalMeetingHub&utm_medium=InteractiveMap&utm_campaign=MMH';
 
     // City dictionary
     const cityCoords = {
@@ -410,12 +410,21 @@
 
       // Link labeling rules
       let href = props.link || '';
-      let label = 'Visit Official Housing Website';
-      if (href) {
-        const low = href.trim().toLowerCase();
-        if (low === PARDOT.toLowerCase()) { href = MEDHUB; label = 'Request Housing'; }
-        else if (low === MEDHUB.toLowerCase()) { label = 'Request Housing'; }
-      }
+let label = 'Visit Official Housing Website';
+
+if (href) {
+  const low = href.trim().toLowerCase();
+
+  // if it's the old Pardot link, swap to MedHub
+  if (low === PARDOT.toLowerCase()) {
+    href = 'https://medicalhub.abtscs.com/Groups.aspx?utm_source=MedicalMeetingHub&utm_medium=InteractiveMap&utm_campaign=MMH';
+    label = 'Request Housing';
+  }
+  // if it's any MedicalHub Groups link (with or without UTM params)
+  else if (low.includes('medicalhub.abtscs.com/groups.aspx')) {
+    label = 'Request Housing';
+  }
+}
       const linkHTML = href ? `<div style="margin-top:6px"><a href="${href}" target="_blank" rel="noopener" style="color:#1f6feb;text-decoration:underline">${label}</a></div>` : '';
 
       const popup = new mapboxgl.Popup()
@@ -501,10 +510,19 @@
       const p=f.properties;
 
       let href = p.link || '';
-      let label = 'Visit Official Housing Website';
-      const low = (href || '').trim().toLowerCase();
-      if (low === PARDOT.toLowerCase()) { href = MEDHUB; label = 'Request Housing'; }
-      else if (low === MEDHUB.toLowerCase()) { label = 'Request Housing'; }
+let label = 'Visit Official Housing Website';
+
+if (href) {
+  const low = href.trim().toLowerCase();
+
+  if (low === PARDOT.toLowerCase()) {
+    href = 'https://medicalhub.abtscs.com/Groups.aspx?utm_source=MedicalMeetingHub&utm_medium=InteractiveMap&utm_campaign=MMH';
+    label = 'Request Housing';
+  } else if (low.includes('medicalhub.abtscs.com/groups.aspx')) {
+    label = 'Request Housing';
+  }
+}
+
 
       const card=document.createElement('div'); card.className='card';
       card.dataset.uid = p.uid;
